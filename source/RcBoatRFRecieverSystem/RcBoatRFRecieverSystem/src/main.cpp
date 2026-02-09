@@ -5,7 +5,7 @@
 /*
 Author: Colton Paul Badock
 Date: Feb 2026
-Version: 4
+Version: 5
 
 DESCRIPTION:
 A system to control the boat via recieved radio freqencies.
@@ -43,6 +43,11 @@ void setup() {
 
 //Infinite application loop
 void loop() {
+
+  /*
+  *Test code to see if we can recieve anything
+  *from our arduino on 433 mhz
+  **/
   uint8_t buf[12];
   uint8_t buflen = sizeof(buf);
   if (user_reciever.recv(buf, &buflen)) {
