@@ -5,7 +5,7 @@
 /*
 Author: Colton Paul Badock
 Date: Feb 2026
-Version: 10
+Version: 11
 
 DESCRIPTION:
 A system to control the boat via recieved radio freqencies.
@@ -64,6 +64,9 @@ char* recieveCommand() {
   uint8_t buf[12];
   uint8_t buflen = sizeof(buf);
 
+  while (user_reciever.recv(buf, &buflen) == false) {
+    //Wait for command
+  }
 
   //If we recieve a message with a good checksum,
   //we will return it as reception here
