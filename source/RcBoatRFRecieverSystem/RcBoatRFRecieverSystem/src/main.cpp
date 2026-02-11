@@ -5,7 +5,7 @@
 /*
 Author: Colton Paul Badock
 Date: Feb 2026
-Version: 9
+Version: 10
 
 DESCRIPTION:
 A system to control the boat via recieved radio freqencies.
@@ -44,16 +44,45 @@ void setup() {
 //Infinite application loop
 void loop() {
 
-  /*
-  *Test code to see if we can recieve anything
-  *from our arduino on 433 mhz
-  **/
+}
+
+
+//Returns the latest command/transmittion
+//recieved from the 433MHz microwave controller
+//for the RC-Boat.
+//----------------------
+//RETURNS:
+//
+//If message recieved -> Returns the msg/command
+//
+//If no message recieved -> returns "NOMSG"
+//
+char* recieveCommand() {
+
+  //Buffer to hold message recieved in an
+  //array
   uint8_t buf[12];
   uint8_t buflen = sizeof(buf);
+
+
+  //If we recieve a message with a good checksum,
+  //we will return it as reception here
   if (user_reciever.recv(buf, &buflen)) {
+    
+    //Unused?
     int i;
-    // Message with a good checksum received, dump it.
-    Serial.print("Message: ");
+
+    //Print the message we recieved for debug
+    Serial.print("433MHz msg recv: ");
     Serial.println((char*)buf);
+
+    //Return the message/command
+    //recieved by the 433MHz reciever
+    return (char*)buf;
+  
+  //If no message was recieved, we return
+  //"NOMSG"
+  } else {
+    return "NOMSG";
   }
 }
