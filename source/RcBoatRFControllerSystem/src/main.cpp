@@ -5,7 +5,7 @@
 /*
 Author: Colton Paul Badock
 Date: Feb 2026
-Version: 7
+Version: 8
 
 DESCRIPTION:
 A system to control the boat via recieved radio freqencies.
@@ -57,58 +57,22 @@ class ColtonTimerSystem {
 //Timer to prevent debounce for the lights toggle
 ColtonTimerSystem lightToggleDebounce;
 
+
 //Transmits a message/command on the
 //open air at 433MHz. The message
 //should be recieved by the RC-Boat
 //and the command will be interprated by
 //the boards micro controller
-void transmitMessage(char *msg) {
+void transmitMessage(const char *msg) {
     
     
     //const char *msg = "Hello World!";
     user_transmitter.send((uint8_t *)msg, strlen(msg));
     user_transmitter.waitPacketSent();
-}
 
-
-
-//Init function (constructor)
-void setup() {
-  
-    //Setup digital and analog pins
-    //based on how we want to use them
-    //for controller inputs
-    pinMode(leftMotorButton_port, INPUT);
-    pinMode(rightMotorButton_port, INPUT);
-    pinMode(lightToggleButton_port, INPUT);
-    pinMode(directionToggle, INPUT_PULLUP);
-
-    //Start debounce timers or timers if needed
-    lightToggleDebounce.startTimer();
-
-
-    //Start serial communication
-    //back to the PC (if plugged in)
-    //for debugging
-    Serial.begin(9600);
-
-    //If the transmitter failed to intialize,
-    //throw an error back to serial
-    if (!user_transmitter.init()) {
-        Serial.println("Transmitter failed to intialize; Error Code: 01");
-    }
-
-}
-
-
-//Infinite application loop
-void loop() {
-
-    //Allow the user to transmit
-    //to the RC Boat with the
-    //controller inputs they press.
-    transmitCommands();
-
+    //Log that we transmitted a message
+    //Serial.println("Message transmitted: ");
+    //Serial.print(msg);
 }
 
 
@@ -195,4 +159,50 @@ void transmitCommands() {
         }
         directionIsForward = 0;
     }
+}
+
+
+//Init function (constructor)
+void setup() {
+  
+    Serial.begin(9600);
+
+    //Setup digital and analog pins
+    //based on how we want to use them
+    //for controller inputs
+    pinMode(leftMotorButton_port, INPUT);
+    pinMode(rightMotorButton_port, INPUT);
+    pinMode(lightToggleButton_port, INPUT);
+    pinMode(directionToggle, INPUT_PULLUP);
+
+    //Start debounce timers or timers if needed
+    lightToggleDebounce.startTimer();
+
+
+    //Start serial communication
+    //back to the PC (if plugged in)
+    //for debugging
+    Serial.begin(9600);
+
+    //If the transmitter failed to intialize,
+    //throw an error back to serial
+    if (!user_transmitter.init()) {
+        Serial.println("Transmitter failed to intialize; Error Code: 01");
+    }
+
+}
+
+
+//Infinite application loop
+void loop() {
+
+    Serial.println(digitalRead(leftMotorButton_port));
+
+    //Allow the user to transmit
+    //to the RC Boat with the
+    //controller inputs they press.
+    transmitCommands();
+
+    //DEBUG PRINT BUTTON
+    //Serial.println(digitalRead(leftMotorButton_port));
 }
