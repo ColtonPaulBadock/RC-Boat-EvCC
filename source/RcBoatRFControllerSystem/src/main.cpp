@@ -5,7 +5,7 @@
 /*
 Author: Colton Paul Badock
 Date: Feb 2026
-Version: 11
+Version: 12
 
 DESCRIPTION:
 A system to control the boat via recieved radio freqencies.
