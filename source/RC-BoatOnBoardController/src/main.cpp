@@ -74,7 +74,7 @@ void Rmotor(int motorSpeed)
     {
       digitalWrite(AIN1, HIGH);   //essentially, we tell AO1 to be positive
       digitalWrite(AIN2, LOW);    //and AO2 will be ground. 
-      Serial.println("R 1st gear");//The direction of the flow of electrons changes the
+      //Serial.println("R 1st gear");//The direction of the flow of electrons changes the
                                   //the direction of rotation. 
     }
     
@@ -82,7 +82,7 @@ void Rmotor(int motorSpeed)
     {
       digitalWrite(AIN1, LOW);    //Now we use AO1 as ground 
       digitalWrite(AIN2, HIGH);   //and AO2 as positive. 
-      Serial.println("R reverse");//The input voltage to AIN1 and AIN2 determins which 
+      //Serial.println("R reverse");//The input voltage to AIN1 and AIN2 determins which 
                                   //output pin (AO1 and AO2) will be ground or positive.
     }
 
@@ -90,12 +90,12 @@ void Rmotor(int motorSpeed)
     {
       digitalWrite(AIN1, LOW);    //We basically have no positive, only ground. 
       digitalWrite(AIN2, LOW);
-      Serial.println("R neutral");
+      //Serial.println("R neutral");
     }
 
     analogWrite(PWMA, abs(motorSpeed)); //This line takes the absolute value of the motor 
-    Serial.print("RThrottle ");         //speed, and sends that through a PWM pin. So a 
-    Serial.println(abs(motorSpeed));    //PWM pin basically has a variable voltage output?
+    //Serial.print("RThrottle ");         //speed, and sends that through a PWM pin. So a 
+    //Serial.println(abs(motorSpeed));    //PWM pin basically has a variable voltage output?
 }
 //the if statements act as a sort of digital transmission, while the PWM pins are the 
 //throttle. 
@@ -106,7 +106,7 @@ void Lmotor(int motorSpeed)
     {
       digitalWrite(BIN1, HIGH);   //essentially, we tell AO1 to be positive
       digitalWrite(BIN2, LOW);    //and AO2 will be ground. 
-      Serial.println("L 1st gear");//The direction of the flow of electrons changes the
+      //Serial.println("L 1st gear");//The direction of the flow of electrons changes the
                                   //the direction of rotation. 
     }
     
@@ -114,7 +114,7 @@ void Lmotor(int motorSpeed)
     {
       digitalWrite(BIN1, LOW);    //Now we use AO1 as ground 
       digitalWrite(BIN2, HIGH);   //and AO2 as positive. 
-      Serial.println("L reverse");//The input voltage to AIN1 and AIN2 determins which 
+      //Serial.println("L reverse");//The input voltage to AIN1 and AIN2 determins which 
                                   //output pin (AO1 and AO2) will be ground or positive.
     }
 
@@ -122,12 +122,12 @@ void Lmotor(int motorSpeed)
     {
       digitalWrite(BIN1, LOW);    //We basically have no positive, only ground. 
       digitalWrite(BIN2, LOW);
-      Serial.println("L neutral");
+      //Serial.println("L neutral");
     }
 
     analogWrite(PWMB, abs(motorSpeed)); //This line takes the absolute value of the motor 
-    Serial.print("LThrottle ");         //speed, and sends that through a PWM pin as a 
-    Serial.println(abs(motorSpeed));    //voltage. This acts as the throttle. 
+    //Serial.print("LThrottle ");         //speed, and sends that through a PWM pin as a 
+    //Serial.println(abs(motorSpeed));    //voltage. This acts as the throttle. 
 }
 
 
@@ -177,8 +177,8 @@ char* recieveCommand() {
     int i;
 
     //Print the message we recieved for debug
-    Serial.print("433MHz msg recv: ");
-    Serial.println((char*)buf);
+    //Serial.print("433MHz msg recv: ");
+    //Serial.println((char*)buf);
 
     //Return the message/command
     //recieved by the 433MHz reciever
@@ -217,6 +217,10 @@ void loop() {
   //if nothing was recieved
   msg = recieveCommand();
 
+  if (msg != "NOMSG") {
+    Serial.println(msg);
+  }
+
   /* 
   * Check what message/command we recieved from the
   * main transmitter, if its a command, set motor/light boolean
@@ -231,6 +235,7 @@ void loop() {
   //a bool status
   if (msg == "LEFT_MOTOR_RUN") {
     leftMotorRunning = 1;
+    Serial.println("Started left motor!");
   } else if (msg == "LEFT_MOTOR_KILL") {
     leftMotorRunning = 0;
   }

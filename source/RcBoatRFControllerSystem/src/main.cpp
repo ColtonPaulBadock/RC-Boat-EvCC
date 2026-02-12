@@ -106,7 +106,7 @@ void transmitCommands() {
     //saying we are running the left motor, then we will not tell
     //it to kill the motor until we let go of the left motor button
     if (digitalRead(leftMotorButton_port) == 0 && transmittedLEFT_MOTOR_RUN == 0) {
-        transmitMessage("LEFT_MOTOR_RUN");
+        transmitMessage("LMRA"); //LEFT_MOTOR_RUN 
         transmittedLEFT_MOTOR_RUN = 1;
     
     //If the left motor button is not pressed,
@@ -114,7 +114,7 @@ void transmitCommands() {
     //kill the left motor one time until we hold the button again
     } else if (digitalRead(leftMotorButton_port) == 1) {
         if (transmittedLEFT_MOTOR_RUN == 1) {
-            transmitMessage("LEFT_MOTOR_KILL");
+            transmitMessage("LMKA"); //LEFT_MOTOR_KILL
         }
         transmittedLEFT_MOTOR_RUN = 0;
     }
@@ -122,21 +122,21 @@ void transmitCommands() {
     //RC boat to run the right motor one time,
     //we will then tell it to kill the motor once we let go.
     if (digitalRead(rightMotorButton_port) == 0 && transmittedRIGHT_MOTOR_RUN == 0) {
-        transmitMessage("RIGHT_MOTOR_RUN");
+        transmitMessage("RMRA"); //RIGHT_MOTOR_RUN
         transmittedRIGHT_MOTOR_RUN = 1;
     //If the right motor button is released,
     //we will kill the motor and do nothing
     //till its pressed again for this statement.
     } else if (digitalRead(rightMotorButton_port) == 1) {
         if (transmittedRIGHT_MOTOR_RUN == 1) {
-            transmitMessage("RIGHT_MOTOR_KILL");
+            transmitMessage("RMKA"); //RIGHT_MOTOR_KILL
         }
         transmittedRIGHT_MOTOR_RUN = 0;
     }
     //If the light toggle is pressed,
     //toggle the lights
     if (digitalRead(lightToggleButton_port) == 0 && lightToggleDebounce.getTime() > 500) {
-        transmitMessage("TOGGLE_LIGHTS");
+        transmitMessage("TLAA"); //TOGGLE_LIGHTS
         lightToggleDebounce.startTimer();
     }
     //If the analog reverse switch is above
@@ -147,7 +147,7 @@ void transmitCommands() {
         //we will not transmit to go forward anymore,
         //until we switch back from reverse again
         if (directionIsForward == 0) {
-            transmitMessage("ACTIVATE_FORWARD");
+            transmitMessage("ACFW"); //ACITVATE_FORWARD
         }
         directionIsForward = 1;
     } else {
@@ -155,7 +155,7 @@ void transmitCommands() {
         //we will not transmit to reverse anymore,
         //until we switch back from forward again
         if (directionIsForward == 1) {
-            transmitMessage("ACTIVATE_REVERSE");
+            transmitMessage("ACRV"); //ACTIVATE_REVERSE
         }
         directionIsForward = 0;
     }
