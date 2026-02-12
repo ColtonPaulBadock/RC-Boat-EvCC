@@ -26,12 +26,121 @@
 //Wire reciever into port "digital 11"
 RH_ASK user_reciever;
 
+const byte AIN1 = 8;
+const byte AIN2 = 9;
+const byte PWMA = 10;
+
+//Left Motor
+const byte BIN1 = 7;
+const byte BIN2 = 6;
+const byte PWMB = 5;
+  
+ //button pin names/locations
+const byte RedB = 2;
+const byte BlkB = 3;
+
+//motor velocity
+unsigned int spd;
+
+//potentiometer pin 
+int phot = 0;
+
+
+//Intializes the motors
+void initMotors() {
+  //set button pins to input pullup
+  pinMode(RedB, INPUT_PULLUP);
+  pinMode(BlkB, INPUT_PULLUP);
+  
+  //set motor pins to output
+  //Right motor
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(PWMA, OUTPUT);
+  //Left motor
+  pinMode(BIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
+  pinMode(PWMB, OUTPUT);
+}
+
+
+
+//The following functions are loosely copied from the google doc linked above. 
+//I have included comments in my own words to demonstrate (an imperfect) understanding. 
+
+void Rmotor(int motorSpeed)
+{
+    if (motorSpeed > 0)           //If we want the motor to run forward, it will:
+    {
+      digitalWrite(AIN1, HIGH);   //essentially, we tell AO1 to be positive
+      digitalWrite(AIN2, LOW);    //and AO2 will be ground. 
+      Serial.println("R 1st gear");//The direction of the flow of electrons changes the
+                                  //the direction of rotation. 
+    }
+    
+    else if (motorSpeed < 0)      //If we want it to go backwards, it will:
+    {
+      digitalWrite(AIN1, LOW);    //Now we use AO1 as ground 
+      digitalWrite(AIN2, HIGH);   //and AO2 as positive. 
+      Serial.println("R reverse");//The input voltage to AIN1 and AIN2 determins which 
+                                  //output pin (AO1 and AO2) will be ground or positive.
+    }
+
+    else                          //If we want to go nowhere:
+    {
+      digitalWrite(AIN1, LOW);    //We basically have no positive, only ground. 
+      digitalWrite(AIN2, LOW);
+      Serial.println("R neutral");
+    }
+
+    analogWrite(PWMA, abs(motorSpeed)); //This line takes the absolute value of the motor 
+    Serial.print("RThrottle ");         //speed, and sends that through a PWM pin. So a 
+    Serial.println(abs(motorSpeed));    //PWM pin basically has a variable voltage output?
+}
+//the if statements act as a sort of digital transmission, while the PWM pins are the 
+//throttle. 
+
+void Lmotor(int motorSpeed)
+{
+    if (motorSpeed > 0)           //If we want the motor to run forward, it will:
+    {
+      digitalWrite(BIN1, HIGH);   //essentially, we tell AO1 to be positive
+      digitalWrite(BIN2, LOW);    //and AO2 will be ground. 
+      Serial.println("L 1st gear");//The direction of the flow of electrons changes the
+                                  //the direction of rotation. 
+    }
+    
+    else if (motorSpeed < 0)      //If we want it to go backwards, it will:
+    {
+      digitalWrite(BIN1, LOW);    //Now we use AO1 as ground 
+      digitalWrite(BIN2, HIGH);   //and AO2 as positive. 
+      Serial.println("L reverse");//The input voltage to AIN1 and AIN2 determins which 
+                                  //output pin (AO1 and AO2) will be ground or positive.
+    }
+
+    else                          //If we want to go nowhere:
+    {
+      digitalWrite(BIN1, LOW);    //We basically have no positive, only ground. 
+      digitalWrite(BIN2, LOW);
+      Serial.println("L neutral");
+    }
+
+    analogWrite(PWMB, abs(motorSpeed)); //This line takes the absolute value of the motor 
+    Serial.print("LThrottle ");         //speed, and sends that through a PWM pin as a 
+    Serial.println(abs(motorSpeed));    //voltage. This acts as the throttle. 
+}
+
+
+
 //Intializes the boat
 void setup() {
   //Start serial communication
   //back to the PC (if plugged in)
   //for debugging
   Serial.begin(9600);
+
+  //Intialize all motors
+  initMotors();
 
   //If the reciever failed to intialize,
   //throw an error back to serial
@@ -91,6 +200,15 @@ char* recieveCommand() {
 const char *msg;
 
 
+//Boolean status of whats running
+//------
+//Motor run values. If 0, motor
+//not running, if 1 motor is running
+bool leftMotorRunning = 0;
+bool rightMotorRunning = 0;
+
+
+
 //infinite application loop
 void loop() {
   
@@ -99,6 +217,58 @@ void loop() {
   //if nothing was recieved
   msg = recieveCommand();
 
+  /* 
+  * Check what message/command we recieved from the
+  * main transmitter, if its a command, set motor/light boolean
+  * operation status to true or false, we will then  set
+  * the operation later in the loop.
+  *
+  * **/
+
+  //Evaluate the left motor commands,
+  //based on what we recieved as a command,
+  //we will set the motors on or off as
+  //a bool status
+  if (msg == "LEFT_MOTOR_RUN") {
+    leftMotorRunning = 1;
+  } else if (msg == "LEFT_MOTOR_KILL") {
+    leftMotorRunning = 0;
+  }
+
+  //Evaluate the right motor commands,
+  //based on what we recieved as a command,
+  //we will set the motors on or off as
+  //a bool status
+  if (msg == "RIGHT_MOTOR_RUN") {
+    rightMotorRunning = 1;
+  } else if (msg == "RIGHT_MOTOR_KILL") {
+    rightMotorRunning = 0;
+  }
   
+
+  /* 
+  * Based on the command/boolean status we have
+  * we will set components operations here 
+  ** */
+  
+  //Run/Kill the left motor based
+  //on the boolean status of the motor
+  //as to wether it is running or not.
+  if (leftMotorRunning == 1) {
+    Lmotor(255);
+  } else {
+    Lmotor(0);
+  }
+
+  //Run/Kill the right motor based
+  //on the boolean status of the motor
+  //as to wether it is running or not.
+  if (rightMotorRunning == 1) {
+    Rmotor(255);
+  } else {
+    Rmotor(0);
+  }
+
+
 
 }
