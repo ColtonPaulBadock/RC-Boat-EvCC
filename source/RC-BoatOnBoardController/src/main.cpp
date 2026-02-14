@@ -138,6 +138,8 @@ void setup() {
   //back to the PC (if plugged in)
   //for debugging
   Serial.begin(9600);
+  Serial.println("Started; starting RC");
+
 
   //Intialize all motors
   initMotors();
@@ -218,6 +220,7 @@ void loop() {
   msg = recieveCommand();
 
   if (msg != "NOMSG") {
+    Serial.print("Message: ");
     Serial.println(msg);
   }
 
@@ -233,10 +236,10 @@ void loop() {
   //based on what we recieved as a command,
   //we will set the motors on or off as
   //a bool status
-  if (msg == "LEFT_MOTOR_RUN") {
+  if (msg == "LMRA") {
     leftMotorRunning = 1;
     Serial.println("Started left motor!");
-  } else if (msg == "LEFT_MOTOR_KILL") {
+  } else if (msg == "LMKA") {
     leftMotorRunning = 0;
   }
 
@@ -244,9 +247,9 @@ void loop() {
   //based on what we recieved as a command,
   //we will set the motors on or off as
   //a bool status
-  if (msg == "RIGHT_MOTOR_RUN") {
+  if (msg == "RMRA") {
     rightMotorRunning = 1;
-  } else if (msg == "RIGHT_MOTOR_KILL") {
+  } else if (msg == "RMKA") {
     rightMotorRunning = 0;
   }
   

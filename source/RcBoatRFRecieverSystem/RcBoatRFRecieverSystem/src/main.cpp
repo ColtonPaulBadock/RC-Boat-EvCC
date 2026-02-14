@@ -62,11 +62,14 @@ char* recieveCommand() {
 
 //Init function (constructor)
 void setup() {
-  
+
     //Start serial communication
     //back to the PC (if plugged in)
     //for debugging
     Serial.begin(9600);
+
+
+    Serial.println("Started debugging grounds!");
 
     //If the reciever failed to intialize,
     //throw an error back to serial
@@ -81,11 +84,14 @@ char* msg;
 //Infinite application loop
 void loop() {
   
-  msg = recieveCommand();
-
-  if (msg != "NOMSG") {
-    Serial.print("Took this message: ");
-    Serial.println(msg);
-  }
+  uint8_t buf[12];
+    uint8_t buflen = sizeof(buf);
+    if (user_reciever.recv(buf, &buflen)) // Non-blocking
+    {
+      int i;
+      // Message with a good checksum received, dump it.
+      Serial.print("Message: ");
+      Serial.println((char*)buf);         
+    }
 
 }
