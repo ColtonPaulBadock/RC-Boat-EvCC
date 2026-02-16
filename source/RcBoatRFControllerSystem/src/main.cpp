@@ -165,6 +165,9 @@ void transmitCommands() {
 //Init function (constructor)
 void setup() {
   
+    //Start serial communication
+    //back to the PC (if plugged in)
+    //for debugging
     Serial.begin(9600);
 
     //Setup digital and analog pins
@@ -178,12 +181,6 @@ void setup() {
     //Start debounce timers or timers if needed
     lightToggleDebounce.startTimer();
 
-
-    //Start serial communication
-    //back to the PC (if plugged in)
-    //for debugging
-    Serial.begin(9600);
-
     //If the transmitter failed to intialize,
     //throw an error back to serial
     if (!user_transmitter.init()) {
@@ -196,13 +193,18 @@ void setup() {
 //Infinite application loop
 void loop() {
 
-    //Serial.println(digitalRead(leftMotorButton_port));
 
     //Allow the user to transmit
     //to the RC Boat with the
     //controller inputs they press.
-    transmitCommands();
+    //transmitCommands();
+
+    const char *msg = "Hello World!";
+    user_transmitter.send((uint8_t *)msg, strlen(msg));
+    user_transmitter.waitPacketSent();
+    Serial.println("Sent msg");
+    delay(1000);
 
     //DEBUG PRINT BUTTON
-    //Serial.println(digitalRead(leftMotorButton_port));
+    
 }

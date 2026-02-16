@@ -217,7 +217,7 @@ void loop() {
   //Get the current transmitted
   //command. This will be "NOMSG"
   //if nothing was recieved
-  msg = recieveCommand();
+  /*msg = recieveCommand();
 
   if (msg != "NOMSG") {
     Serial.print("Message: ");
@@ -232,6 +232,7 @@ void loop() {
   *
   * **/
 
+  /*
   //Evaluate the left motor commands,
   //based on what we recieved as a command,
   //we will set the motors on or off as
@@ -258,7 +259,7 @@ void loop() {
   * Based on the command/boolean status we have
   * we will set components operations here 
   ** */
-  
+  /*
   //Run/Kill the left motor based
   //on the boolean status of the motor
   //as to wether it is running or not.
@@ -275,8 +276,17 @@ void loop() {
     Rmotor(255);
   } else {
     Rmotor(0);
-  }
+  }*/
 
+  uint8_t buf[12];
+  uint8_t buflen = sizeof(buf);
+  if (user_reciever.recv(buf, &buflen)) // Non-blocking
+  {
+    int i;
+    // Message with a good checksum received, dump it.
+    Serial.print("Message: ");
+    Serial.println((char*)buf);         
+  }
 
 
 }
