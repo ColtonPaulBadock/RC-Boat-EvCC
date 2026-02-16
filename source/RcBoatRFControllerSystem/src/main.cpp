@@ -197,13 +197,13 @@ void loop() {
     //Allow the user to transmit
     //to the RC Boat with the
     //controller inputs they press.
-    //transmitCommands();
+    transmitCommands();
 
-    const char *msg = "Hello World!";
+    /*const char *msg = "Hello World!";
     user_transmitter.send((uint8_t *)msg, strlen(msg));
     user_transmitter.waitPacketSent();
     Serial.println("Sent msg");
-    delay(1000);
+    delay(1000);*/
 
     //DEBUG PRINT BUTTON
     
