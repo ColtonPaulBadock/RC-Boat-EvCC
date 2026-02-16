@@ -232,7 +232,6 @@ void loop() {
   //a bool status
   if (strcmp(msg, "LMRA") == 0) {
     leftMotorRunning = 1;
-    Serial.println("Started left motor!");
   } else if (strcmp(msg, "LMKA") == 0) {
     leftMotorRunning = 0;
   }
