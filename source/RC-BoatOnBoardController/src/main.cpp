@@ -199,7 +199,7 @@ char* recieveCommand() {
 //picked up from the 433MHz transmitter
 //by the 433MHz reciever each cycle
 //in "loop"
-const char *msg;
+char *msg = "NOMS";
 
 
 //Boolean status of whats running
@@ -217,12 +217,12 @@ void loop() {
   //Get the current transmitted
   //command. This will be "NOMSG"
   //if nothing was recieved
-  /*msg = recieveCommand();
+  //msg = "NOMSG";//recieveCommand();
 
-  if (msg != "NOMSG") {
-    Serial.print("Message: ");
-    Serial.println(msg);
-  }
+  //if (msg != "NOMS") {
+  //  Serial.print("Message: ");
+  //  Serial.println(msg);
+  //}
 
   /* 
   * Check what message/command we recieved from the
@@ -232,7 +232,7 @@ void loop() {
   *
   * **/
 
-  /*
+  
   //Evaluate the left motor commands,
   //based on what we recieved as a command,
   //we will set the motors on or off as
@@ -259,7 +259,7 @@ void loop() {
   * Based on the command/boolean status we have
   * we will set components operations here 
   ** */
-  /*
+  
   //Run/Kill the left motor based
   //on the boolean status of the motor
   //as to wether it is running or not.
@@ -276,16 +276,29 @@ void loop() {
     Rmotor(255);
   } else {
     Rmotor(0);
-  }*/
+  }
 
-  uint8_t buf[12];
+
+  /*
+  Check the transmitter for a message.
+  If we recieved a message, store it in "msg" char buffer (string)
+  to be interpreted as a command later.
+  If we recieve no message, we will set msg to "NOMSG" command,
+  so we will execute no onboard commands on the boat.
+  */
+  uint8_t buf[5]; //Original size: 12. 
   uint8_t buflen = sizeof(buf);
   if (user_reciever.recv(buf, &buflen)) // Non-blocking
   {
     int i;
     // Message with a good checksum received, dump it.
     Serial.print("Message: ");
-    Serial.println((char*)buf);         
+    //Serial.println((char*)buf);
+    msg = (char*)buf;
+    msg[5] = '\0';
+    Serial.println(msg);
+  } else {
+    msg = "NOMSG";
   }
 
 
