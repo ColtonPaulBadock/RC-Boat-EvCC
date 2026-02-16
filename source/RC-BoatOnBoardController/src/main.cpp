@@ -199,7 +199,7 @@ char* recieveCommand() {
 //picked up from the 433MHz transmitter
 //by the 433MHz reciever each cycle
 //in "loop"
-char *msg = "NOMS";
+char msg[5] = "NOMS";
 
 
 //Boolean status of whats running
@@ -219,28 +219,21 @@ void loop() {
   //if nothing was recieved
   //msg = "NOMSG";//recieveCommand();
 
-  //if (msg != "NOMS") {
-  //  Serial.print("Message: ");
-  //  Serial.println(msg);
-  //}
-
-  /* 
-  * Check what message/command we recieved from the
-  * main transmitter, if its a command, set motor/light boolean
-  * operation status to true or false, we will then  set
-  * the operation later in the loop.
-  *
-  * **/
+  //Serial.println(msg);
+  if (strcmp(msg, "NOMS") != 0) {
+    Serial.print("Message: ");
+    Serial.println(msg);
+  }
 
   
   //Evaluate the left motor commands,
   //based on what we recieved as a command,
   //we will set the motors on or off as
   //a bool status
-  if (msg == "LMRA") {
+  if (strcmp(msg, "LMRA") == 0) {
     leftMotorRunning = 1;
     Serial.println("Started left motor!");
-  } else if (msg == "LMKA") {
+  } else if (strcmp(msg, "LMKA") == 0) {
     leftMotorRunning = 0;
   }
 
@@ -248,9 +241,9 @@ void loop() {
   //based on what we recieved as a command,
   //we will set the motors on or off as
   //a bool status
-  if (msg == "RMRA") {
+  if (strcmp(msg, "RMRA") == 0) {
     rightMotorRunning = 1;
-  } else if (msg == "RMKA") {
+  } else if (strcmp(msg, "RMKA") == 0) {
     rightMotorRunning = 0;
   }
   
@@ -279,6 +272,12 @@ void loop() {
   }
 
 
+   /* 
+  * Check what message/command we recieved from the
+  * main transmitter, if its a command, set motor/light boolean
+  * operation status to true or false, we will then  set
+  * the operation later in the loop.
+  * **/
   /*
   Check the transmitter for a message.
   If we recieved a message, store it in "msg" char buffer (string)
@@ -286,19 +285,33 @@ void loop() {
   If we recieve no message, we will set msg to "NOMSG" command,
   so we will execute no onboard commands on the boat.
   */
-  uint8_t buf[5]; //Original size: 12. 
+  uint8_t buf[12]; //Original size: 12. 
   uint8_t buflen = sizeof(buf);
+  //If we recieved a good message,
+  //then write it to the "msg[]"
+  //array for indexing and evaluation as
+  //a command.
   if (user_reciever.recv(buf, &buflen)) // Non-blocking
   {
     int i;
     // Message with a good checksum received, dump it.
-    Serial.print("Message: ");
     //Serial.println((char*)buf);
-    msg = (char*)buf;
-    msg[5] = '\0';
-    Serial.println(msg);
+    //msg = (char*)buf;
+    msg[0] = buf[0];
+    msg[1] = buf[1];
+    msg[2] = buf[2];
+    msg[3] = buf[3];
+    msg[4] = '\0';
   } else {
-    msg = "NOMSG";
+    //If no message is recieved, we will
+    //load the "NOMS" (no message) command
+    //to the message buffer and will do
+    //nothing
+    msg[0] = 'N';
+    msg[1] = 'O';
+    msg[2] = 'M';
+    msg[3] = 'S';
+    msg[4] = '\0';
   }
 
 
