@@ -341,6 +341,7 @@ void loop() {
   //Every 200 frames, check for a flood
   if (cycle % 200 == 0) {
     detectFlood();
+    Serial.println(val);
   }
 
 
