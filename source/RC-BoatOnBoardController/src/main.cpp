@@ -64,6 +64,26 @@ void initMotors() {
 }
 
 
+//Water sensor values
+//#define POWER  7
+#define SIGNAL  A5
+int val = 0; // stores the value of the water sensor
+int waterLimit = 150; // higher time limit to avoid false detection
+
+//Detects water flooding,
+//will print to STD-OUT to PC
+//(Serial) if a flood is detected
+void detectFlood() {
+  val = analogRead(SIGNAL); 
+    //digitalWrite(POWER, LOW);
+    
+    if (val > waterLimit) // if water detected then alert serial monitor 
+    {
+      Serial.print("Leak Detected! Value: ");
+      Serial.println(val);
+    }
+}
+
 
 //The following functions are loosely copied from the google doc linked above. 
 //I have included comments in my own words to demonstrate (an imperfect) understanding. 
@@ -209,6 +229,9 @@ char msg[5] = "NOMS";
 bool leftMotorRunning = 0;
 bool rightMotorRunning = 0;
 
+//The total times "loop()" has run,
+//I.E. the total applicatuion cycles.
+long cycle = 0;
 
 
 //infinite application loop
@@ -314,4 +337,13 @@ void loop() {
   }
 
 
+
+  //Every 200 frames, check for a flood
+  if (cycle % 200 == 0) {
+    detectFlood();
+  }
+
+
+  //Update the total cycles that have passed.
+  cycle++;
 }
