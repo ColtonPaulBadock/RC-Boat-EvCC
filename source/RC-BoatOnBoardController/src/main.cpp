@@ -20,11 +20,24 @@
 #include <Arduino.h> //Default Arduino infastructure
 #include <RH_ASK.h> //Radio Head library for 433MHz communication and lowlevel communication to transcieveing hardware
 #include <SPI.h> //Required  dependency for <RH_ASK.h> (Radio Head) to compile, not ran onboard.
-
+#include <Servo.h> //Servo library for controlling light servos
 
 //The reciever for the boat.
 //Wire reciever into port "digital 11"
 RH_ASK user_reciever;
+
+Servo serL; // naming the servo
+Servo serR;
+
+byte positionL = 90; // setting default servo position
+byte positionR = 90;
+
+const byte leda = 3; // led variables
+const byte ledb = 2;
+
+bool ledstate = LOW;
+bool lastbuttonState = HIGH;
+
 
 const byte AIN1 = 8;
 const byte AIN2 = 9;
@@ -44,6 +57,35 @@ unsigned int spd;
 
 //potentiometer pin 
 int phot = 0;
+
+
+//Allows the user to run a timer
+//using the default Arduino timer system.
+class ColtonTimerSystem {
+  private:
+
+    //This will hold the total time
+    //that has passed since the timer
+    //started.
+    long timerStarted = 0;
+  
+  public:
+
+    //Starts the timer;
+    //Can be called to reset the timer
+    void startTimer() {
+      //Store the current milliseconds
+      //since the board started.
+      timerStarted = millis();
+    }
+
+    long getTime() {
+      return millis() - timerStarted;
+    }
+};
+
+
+ColtonTimerSystem jacksonLEDTimer;
 
 
 //Intializes the motors
@@ -151,6 +193,14 @@ void Lmotor(int motorSpeed)
 }
 
 
+void initJacksonsLEDS() {
+  pinMode(leda, OUTPUT); // activiating led digital pins
+  pinMode(ledb, OUTPUT);
+  
+  serL.attach(12); // attaching servos to digital pin
+  serR.attach(13);
+}
+
 
 //Intializes the boat
 void setup() {
@@ -160,6 +210,11 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Started; starting RC");
 
+  //Timer system
+  jacksonLEDTimer.startTimer();
+
+  //Setup Jacksons LED system
+  initJacksonsLEDS();
 
   //Intialize all motors
   initMotors();
@@ -214,6 +269,7 @@ char* recieveCommand() {
 }
 
 
+byte serPos = 0;
 
 //The message/command
 //picked up from the 433MHz transmitter
@@ -343,6 +399,19 @@ void loop() {
     detectFlood();
     Serial.println(val);
   }
+
+  //Move Jacksons Servos
+  if (jacksonLEDTimer.getTime() > 100) {
+    jacksonLEDTimer.startTimer();
+    serL.write(serPos);
+    serR.write(serPos);
+    serPos++;
+    
+    if (serPos) {
+      serPos = 0;
+    }
+  }
+
 
 
   //Update the total cycles that have passed.
